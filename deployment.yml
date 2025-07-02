@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+spec:
+  replicas: 2  # Adjust as needed
+  selector:
+    matchLabels:
+      app: app  # ⭐ Used by Service’s `spec.selector.app` to find Pods
+  template:
+    metadata:
+      labels:
+        app: app # ⭐ Must match Service’s selector
+    spec:
+      containers:
+      - name: app
+        image: 255945442255.dkr.ecr.us-east-1.amazonaws.com/taskmgr-pte-repo:latest  # Replace with your Docker image
+        ports:
+        - containerPort: 5000  # Same as ECS task's container port and Service's targetPort
+        envFrom:
+        - secretRef:
+            name: app-secrets
+---
+  #Service (internal LB)
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: app-service
+  spec:
+    selector:
+      app: app
+    ports:
+      - protocol: TCP
+        port: 80
+        targetPort: 5000
+    type: ClusterIP  # Use NodePort/LoadBalancer if needed
