@@ -26,18 +26,25 @@ docker push rger/taskmgr-pte-repo:latest
    ```bash
    kubectl delete -f manifests/  # Clean up existing (optional)
 
-# Apply MongoDB first
+# Apply dependencies first
+kubectl apply -f manifests/configmap.yaml
+
+kubectl apply -f manifests/app-secrets.yaml
+
 kubectl apply -f manifests/mongo-db.yaml
 
 # Wait for MongoDB to be ready
 kubectl wait --for=condition=Ready pod -l app=mongo --timeout=120s
 
-# Then apply secrets and app
-kubectl apply -f manifests/app-secrets.yaml
+# Then apply deployment
 kubectl apply -f manifests/deployment.yaml
 
-# apply the rest
-kubectl apply -f manifests/
+# Wait for pods to initialize
+kubectl wait --for=condition=Available deployment/app-deployment --timeout=180s
+
+# ClusterIP / NodePort
+kubectl apply -f manifests/service.yaml
+kubectl apply -f manifests/ingress.yaml
 
 # Verify Deployment  
 kubectl get all
