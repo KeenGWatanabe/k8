@@ -1,106 +1,45 @@
-Yes! When working with **Minikube**, you typically don't need **Terraform files** at all. Minikube is designed for local Kubernetes development, so you only need:
+startup Docker desktop (Windows) 
+1. **Start Minikube**:
+   ```bash
+   minikube start --driver=docker
+   minikube addons enable ingress
+   ```
 
-### **1. What You Need for Minikube (YAML Files Only)**
-| File Type               | Purpose                                                                 | Example from Your Repo                     |
-|-------------------------|-------------------------------------------------------------------------|--------------------------------------------|
-| **Deployment**          | Defines your pods and replicas                                         | [`deployment.yaml`](https://github.com/KeenGWatanabe/k8-eks/blob/main/deployment.yaml) |
-| **Service**             | Exposes pods internally/externally (NodePort for Minikube)             | *Missing* (need to add `service-minikube.yaml`) |
-| **ConfigMap**           | Stores non-sensitive configs                                           | [`configmap.yaml`](https://github.com/KeenGWatanabe/k8-eks/blob/main/configmap.yaml) |
-| **Secrets**             | Stores sensitive data (base64-encoded)                                 | [`app-secrets.yaml`](https://github.com/KeenGWatanabe/k8-eks/blob/main/app-secrets.yaml) |
-| **ServiceAccount**      | Manages permissions (simpler in Minikube)                              | [`service-account.yaml`](https://github.com/KeenGWatanabe/k8-eks/blob/main/service-account.yaml) |
+2. **Deploy to Minikube**:
+   ```bash
+   kubectl apply -f manifests/
+   ```
 
-### **2. What You *Don’t* Need for Minikube**
-- **Terraform Files** (like `main.tf`, `variables.tf`):  
-  These are for cloud infrastructure (EKS, VPC, etc.) and aren’t used locally.
-- **AWS-Specific Annotations**:  
-  Example: `service.beta.kubernetes.io/aws-load-balancer-type: alb`
-- **Cloud Storage Classes**:  
-  Replace EBS/EFS references with `hostPath` or `emptyDir`.
+3. **Access Your App**:
+   ```bash
+   minikube service nodeapp-service
+   # OR for ingress:
+   minikube tunnel
+   curl http://localhost
+   ```
 
----
+## 🔍 Verification Checklist
+1. Pods running:
+   ```bash
+   kubectl get pods
+   ```
+2. Service exposed:
+   ```bash
+   kubectl get svc
+   ```
+3. Ingress routes (if used):
+   ```bash
+   kubectl get ingress
+   ```
 
-### **3. Minikube-Specific Setup**
-#### **Example: `service-minikube.yaml` (Add This)**
-```yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: nodeapp-service
-spec:
-  type: NodePort   # ← Minikube uses NodePort or `minikube tunnel` for LoadBalancer
-  selector:
-    app: nodeapp   # ← Must match your deployment's labels
-  ports:
-    - port: 3000   # ← Port exposed internally
-      targetPort: 3000  # ← Container port (matches your deployment)
-      nodePort: 31000   # ← Optional: Fixed port (30000-32767)
-```
+## 📌 Key Recommendations
+1. **Add service.yaml** - Critical for accessibility
+2. **Consider namespaces** - Add `metadata.namespace` to resources
+3. **Add health checks** - Liveness/readiness probes in deployment
 
-#### **Deploy to Minikube**
-```bash
-# Start Minikube
-minikube start --driver=docker
+Would you like me to submit a PR with these improvements? I can:
+1. Add the missing service.yaml
+2. Include an optional ingress.yaml 
+3. Add verification commands in a TESTING.md file
 
-# Apply all YAMLs
-kubectl apply -f deployment.yaml
-kubectl apply -f service-minikube.yaml
-kubectl apply -f configmap.yaml
-kubectl apply -f app-secrets.yaml
-
-# Access the app
-minikube service nodeapp-service  # Opens browser automatically
-```
-
----
-
-### **4. Key Differences: Minikube vs EKS**
-| **Component**       | **Minikube (Local)**               | **EKS (AWS)**                          |
-|----------------------|------------------------------------|----------------------------------------|
-| **Networking**       | `NodePort` or `minikube tunnel`    | `LoadBalancer` (ALB/NLB)               |
-| **Storage**          | `hostPath` or `emptyDir`           | `EBS`, `EFS` CSI drivers               |
-| **Service Accounts** | Basic RBAC                         | Integrates with AWS IAM                |
-| **Ingress**          | `minikube addons enable ingress`   | Requires AWS ALB Ingress Controller    |
-
----
-
-### **5. Pro Tip: Use Kustomize for Overlays**
-Keep your EKS configs but add a Minikube overlay:  
-```bash
-mkdir -p k8s/overlays/minikube
-```
-```yaml
-# k8s/overlays/minikube/service.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: nodeapp-service
-spec:
-  type: NodePort
-  selector:
-    app: nodeapp
-  ports:
-    - port: 3000
-      targetPort: 3000
-```
-```yaml
-# k8s/overlays/minikube/kustomization.yaml
-resources:
-- ../../base
-patches:
-- service.yaml
-```
-
-Deploy with:  
-```bash
-kubectl apply -k k8s/overlays/minikube
-```
-
----
-
-### **Summary**
-- **Minikube = Pure YAML** (no Terraform).  
-- **Add `service-minikube.yaml`** to expose your app.  
-- **Remove AWS-specific** configs/annotations.  
-- Use `minikube service <name>` to access apps.  
-
-Want me to fork your repo and create a Minikube-specific branch with these changes? I can show the exact YAMLs needed!
+The repo is 90% ready for Minikube - just needs those networking components!
