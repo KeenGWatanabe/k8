@@ -1,4 +1,11 @@
 startup Docker desktop (Windows) 
+
+# Use Docker Hub
+docker login -u rger
+# Tag and Push to Docker Hub:
+docker tag taskmgr-pte-repo:latest rger/taskmgr-pte-repo:latest
+docker push rger/taskmgr-pte-repo:latest
+
 1. **Start Minikube**:
    ```bash
    minikube start --driver=docker
@@ -37,9 +44,4 @@ startup Docker desktop (Windows)
 2. **Consider namespaces** - Add `metadata.namespace` to resources
 3. **Add health checks** - Liveness/readiness probes in deployment
 
-Would you like me to submit a PR with these improvements? I can:
-1. Add the missing service.yaml
-2. Include an optional ingress.yaml 
-3. Add verification commands in a TESTING.md file
 
-The repo is 90% ready for Minikube - just needs those networking components!

@@ -14,9 +14,9 @@ spec:
     spec:
       containers:
       - name: app
-        image: 255945442255.dkr.ecr.us-east-1.amazonaws.com/taskmgr-pte-repo:latest  # Replace with your Docker image
+        image: rger/taskmgr-pte-repo:latest # Docker Hub image
         ports:
-        - containerPort: 5000  # Same as ECS task's container port and Service's targetPort
+        - containerPort: 3000  # Same as ECS task's container port and Service's targetPort
         envFrom:
         - secretRef:
             name: app-secrets
@@ -32,5 +32,5 @@ spec:
     ports:
       - protocol: TCP
         port: 80
-        targetPort: 5000
+        targetPort: 3000
     type: ClusterIP  # Use NodePort/LoadBalancer if needed
