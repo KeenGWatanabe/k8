@@ -1,3 +1,6 @@
+This deployment is purely local minikube only
+AWS k8 deployment is another repo 
+
 startup Docker desktop (Windows) 
 
 # Use Docker Hub
@@ -5,6 +8,8 @@ docker login -u rger
 # Tag and Push to Docker Hub:
 docker tag taskmgr-pte-repo:latest rger/taskmgr-pte-repo:latest
 docker push rger/taskmgr-pte-repo:latest
+
+# encode secrets
 
 1. **Start Minikube**:
    ```bash
@@ -14,7 +19,8 @@ docker push rger/taskmgr-pte-repo:latest
 
 2. **Deploy to Minikube**:
    ```bash
-   kubectl apply -f manifests/
+   kubectl delete -f manifests/  # Clean up existing (optional)
+   kubectl apply -f manifests/   # Recreate with consistent naming
    ```
 
 3. **Access Your App**:
@@ -24,6 +30,8 @@ docker push rger/taskmgr-pte-repo:latest
    minikube tunnel
    curl http://localhost
    ```
+# check status
+kubectl get pods,svc,ingress
 
 ## 🔍 Verification Checklist
 1. Pods running:

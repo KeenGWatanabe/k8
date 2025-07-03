@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   name: nodeapp-ingress # ⭐ Must match `service.yaml`’s name
 spec:
-  ingressClassName: alb
+  ingressClassName: nginx # Use the NGINX Ingress Controller
   rules:
   - http:
       paths:
@@ -13,4 +13,4 @@ spec:
           service:
             name: nodeapp-service # ⭐ Must match `service.yaml`’s name
             port:
-              number: 3000
+              number: 80

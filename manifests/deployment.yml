@@ -3,34 +3,54 @@ kind: Deployment
 metadata:
   name: app-deployment
 spec:
-  replicas: 2  # Adjust as needed
+  replicas:   # Adjust as needed
   selector:
     matchLabels:
-      app: app  # ⭐ Used by Service’s `spec.selector.app` to find Pods
+      app: nodeapp  # ⭐ Used by Service’s `spec.selector.app` to find Pods
   template:
     metadata:
       labels:
-        app: app # ⭐ Must match Service’s selector
+        app: nodeapp # ⭐ Must match Service’s selector
     spec:
       containers:
-      - name: app
+      - name: nodeapp
         image: rger/taskmgr-pte-repo:latest # Docker Hub image
         ports:
         - containerPort: 3000  # Same as ECS task's container port and Service's targetPort
         envFrom:
         - secretRef:
             name: app-secrets
+        - startupProbe:
+        httpGet:
+          path: /healthz
+          port: 3000
+        failureThreshold: 30  # Give more time for DB connection
+        periodSeconds: 5    
+        # Add these critical configurations:
+        imagePullPolicy: IfNotPresent  # Prevent pull issues
+        readinessProbe:                # Health check
+          httpGet:
+            path: /ready
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        resources:                    # Prevent OOM crashes
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+
 ---
   #Service (internal LB)
   apiVersion: v1
   kind: Service
   metadata:
-    name: app-service
+    name: nodeapp-service
   spec:
+    type: NodePort  # Use ClusterIP for Minikube access
     selector:
-      app: app
+      app: nodeapp
     ports:
       - protocol: TCP
         port: 80
         targetPort: 3000
-    type: ClusterIP  # Use NodePort/LoadBalancer if needed
+        nodePort: 31000 # Optional: Fixed NodePort (30000-32767)
