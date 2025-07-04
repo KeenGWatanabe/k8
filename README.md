@@ -52,7 +52,7 @@ kubectl get all
 3. **Access Your App**:
    ```bash
    minikube service nodeapp-service
-   # OR for ingress:
+   # OR for ingress:S
    minikube tunnel
    curl http://localhost
    ```
@@ -78,7 +78,7 @@ kubectl get pods,svc,ingress
 2. **Consider namespaces** - Add `metadata.namespace` to resources
 3. **Add health checks** - Liveness/readiness probes in deployment
 
-
+![alt text](image.png)
 
 
 

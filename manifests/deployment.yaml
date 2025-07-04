@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: deployment
+  name: app-deployment
 spec:
   replicas: 1
   selector:
@@ -21,18 +21,29 @@ spec:
         envFrom:
         - secretRef:
             name: app-secrets
+        resources:  # Added resource limits
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
         startupProbe:
-          httpGet:
-            path: /healthz
+          tcpSocket:
             port: 3000
-          initialDelaySeconds: 30
-          periodSeconds: 5
+          initialDelaySeconds: 45
+          periodSeconds: 10
           failureThreshold: 30
         readinessProbe:
-          httpGet:
-            path: /healthz
+          tcpSocket:
             port: 3000
-          initialDelaySeconds: 5
+          initialDelaySeconds: 10
           periodSeconds: 5
           failureThreshold: 3
+        livenessProbe:  # Added liveness probe
+          tcpSocket:
+            port: 3000
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          failureThreshold: 3  
 
