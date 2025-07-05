@@ -78,7 +78,8 @@ kubectl get pods,svc,ingress
 2. **Consider namespaces** - Add `metadata.namespace` to resources
 3. **Add health checks** - Liveness/readiness probes in deployment
 
-![alt text](image.png)
+deployed app
+![deployed image](/images/deployed.png)
 
 
 
