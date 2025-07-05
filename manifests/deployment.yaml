@@ -46,4 +46,10 @@ spec:
           initialDelaySeconds: 60
           periodSeconds: 10
           failureThreshold: 3  
-
+---          
+# In your deployment.yaml
+template:
+  metadata:
+    annotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "3000"  # Your app's port
