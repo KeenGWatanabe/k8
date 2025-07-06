@@ -21,6 +21,9 @@ helm repo update
 
 # Install kube-prometheus-stack (includes Grafana)
 helm install monitoring prometheus-community/kube-prometheus-stack
+
+# To avoid retrieving it manually next time, set a password in values.yaml during installation: Then upgrade your release:
+helm upgrade -f values.yaml monitoring prometheus-community/kube-prometheus-stack
 ```
 
 ---
