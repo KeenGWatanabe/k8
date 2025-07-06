@@ -19,10 +19,11 @@ kubectl wait --for=condition=Available deployment/app-deployment --timeout=180s
 # Expose the app
 kubectl apply -f manifests/service.yaml
 kubectl apply -f manifests/ingress.yaml
+kubectl get all
 
 # Print access info
 echo "=== Access Instructions ==="
-echo "1. Run in another terminal: minikube tunnel"
-echo "2. Access via: http://localhost"
-echo "3. OR use direct service URL:"
-minikube service nodeapp-service --url
+minikube service nodeapp-service
+   # OR for ingress:
+minikube tunnel
+curl http://localhost

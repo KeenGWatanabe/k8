@@ -14,7 +14,23 @@ docker push rger/taskmgr-pte-repo:latest
 
 ### App repo #########################
 
-# encode secrets
+# Option 1- Use shellscript to run it 
+
+
+Start Docker Desktop with 'Github acct' (Windows)
+```bash
+sudo systemctl start docker (Linux)
+docker login -u rger
+```
+
+
+# run deploy.sh (script for below sequence)
+```bash
+chmod +x deploy.sh
+./deploy.sh
+```
+
+# Option 2-Run it manually below
 
 1. **Start Minikube**:
    ```bash
