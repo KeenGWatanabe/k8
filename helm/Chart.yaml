@@ -1,0 +1,4 @@
+apiVersion: v2
+name: nodeapp
+description: Node.js + MongoDB Helm chart
+version: 0.1.0
