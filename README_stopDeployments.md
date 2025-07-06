@@ -30,6 +30,8 @@ kubectl delete deployment app-deployment
 #### **B. Stop All Resources in a Namespace**
 ```bash
 kubectl delete all --all -n <namespace>
+ # OR
+kubectl delete -f ./manifests
 ```
 
 #### **C. Stop Specific Resources**

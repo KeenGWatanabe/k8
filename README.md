@@ -7,6 +7,7 @@ startup Docker desktop (Windows)
 sudo systemctl start docker (Linux)
 
 # Use Docker Hub
+
 docker login -u rger
 # Tag and Push to Docker Hub:
 docker tag taskmgr-pte-repo:latest rger/taskmgr-pte-repo:latest
@@ -14,7 +15,9 @@ docker push rger/taskmgr-pte-repo:latest
 
 ### App repo #########################
 
-# encode secrets
+
+# Use Docker Hub
+docker login -u rger
 
 1. **Start Minikube**:
    ```bash
