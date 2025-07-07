@@ -35,13 +35,30 @@ jobs:
         kubectl apply -f manifests/mongo-db.yaml
         kubectl wait --for=condition=Ready pod -l app=mongo --timeout=120s
 
+    - name: Deploy Configurations
+      run: |
+        kubectl apply -f manifests/configmap.yaml
+        kubectl apply -f manifests/app-secrets.yaml
+        kubectl get secrets  # Verify
+
     - name: Deploy Application
       run: |
         kubectl apply -f manifests/deployment.yaml
-        kubectl wait --for=condition=Available deployment/app-deployment --timeout=180s
+        kubectl wait --for=condition=Available deployment/app-deployment --timeout=300s
+        kubectl rollout status deployment/app-deployment  # More thorough check
+
+    - name: Expose Application
+      run: |
         kubectl apply -f manifests/service.yaml
         kubectl apply -f manifests/ingress.yaml
+        minikube service list  # Show exposed services
 
-    - name: Verify
-      run: kubectl get all,ingress
+    - name: Verify Deployment
+      run: |
+        kubectl get pods -o wide
+        kubectl get svc,ingress
+        kubectl get endpoints  # Verify service endpoints
+        echo "Application URL: $(minikube service nodeapp-service --url)" 
+
+
 
