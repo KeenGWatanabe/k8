@@ -97,6 +97,8 @@ kubectl get pods,svc,ingress
 
 deployed app
 ![deployed image](/images/deployed.png)
+CI/CD checks
+![CI/CD](/images/CICD.png)
 
 
 
