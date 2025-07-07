@@ -33,7 +33,7 @@ jobs:
     - name: Deploy MongoDB
       run: |
         kubectl apply -f manifests/mongo-db.yaml
-        kubectl wait --for=condition=Ready pod -l app=mongo --timeout=120s
+        kubectl wait --for=condition=Ready pod -l app=mongo --timeout=300s
 
     - name: Deploy Configurations
       run: |
@@ -44,7 +44,11 @@ jobs:
     - name: Deploy Application
       run: |
         kubectl apply -f manifests/deployment.yaml
-        kubectl wait --for=condition=Available deployment/app-deployment --timeout=300s
+        kubectl wait --for=condition=Ready pod -l app=nodeapp --timeout=300s
+        kubectl wait --for=condition=Available deployment/app-deployment --timeout=600s || {
+          kubectl describe deployment app-deployment
+          exit 1
+          }
         kubectl rollout status deployment/app-deployment  # More thorough check
 
     - name: Expose Application
