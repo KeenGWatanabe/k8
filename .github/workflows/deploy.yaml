@@ -57,14 +57,16 @@ jobs:
       run: |
         kubectl apply -f manifests/service.yaml
         kubectl apply -f manifests/ingress.yaml
-        minikube service list  # Show exposed services
+        minikube service list 
 
     - name: Verify Deployment
       run: |
         kubectl get pods -o wide
         kubectl get svc,ingress
         kubectl get endpoints  # Verify service endpoints
-        echo "Application URL: $(minikube service nodeapp-service --url)" 
+        
+        echo "Application URL: $(minikube service nodeapp-service --url)"  
+
 
 
 
