@@ -9,18 +9,21 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up Minikube
-      uses: manusa/actions-setup-minikube@v3.0.0
+    - name: Setup Minikube
+      uses: manusa/actions-setup-minikube@v2.14.0
       with:
-        minikube version: 'latest'
-        kubernetes version: 'stable'
+        minikube version: 'v1.35.0'
+        kubernetes version: 'v1.33.0'
+        github token: ${{ secrets.GITHUB_TOKEN }}
         driver: docker
-        addons: ingress
+        addons: ingress,dashboard
 
     - name: Start Minikube
       run: |
         minikube start
         minikube status
+        minikube addons enable ingress 
+        kubectl cluster-info
 
     - name: Deploy Application
       run: |
