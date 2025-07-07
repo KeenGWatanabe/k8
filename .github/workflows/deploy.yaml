@@ -44,11 +44,13 @@ jobs:
     - name: Deploy Application
       run: |
         kubectl apply -f manifests/deployment.yaml
-        kubectl wait --for=condition=Ready pod -l app=nodeapp --timeout=300s
-        kubectl wait --for=condition=Available deployment/app-deployment --timeout=600s || {
-          kubectl describe deployment app-deployment
+        kubectl wait --for=jsonpath='{.status.phase}'=Running pod -l app=nodeapp --timeout=300s
+        kubectl wait --for=condition=ContainersReady pod -l app=nodeapp --timeout=600s || {
+          echo "=== DEBUGGING ==="
+          kubectl describe pods -l app=nodeapp
+          kubectl logs -l app=nodeapp --tail=100
           exit 1
-          }
+        }
         kubectl rollout status deployment/app-deployment  # More thorough check
 
     - name: Expose Application
