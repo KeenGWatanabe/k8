@@ -5,8 +5,8 @@ branch : Monitor
 # deploy : .github/workflows/deploy.yaml (CICD)
 ![CI/CD](/images/CICD.png)
 
-This deployment is purely local minikube only
-AWS k8 deployment is another repo 
+This deployment is purely local [minikube](./README_files/README_minikube.md)only. [install_minikube](./README_files/README_installMinikube.md)
+AWS k8 deployment is another repo [costing](./README_files/README_costing.md)
 
 ### App repo #########################
 
@@ -41,12 +41,15 @@ chmod +x deploy.sh
 ```
 
 # run monitor.sh (script for Grafana+Prometheus)
+[GrafanaPrometheus](./README_files/README_GrafanaPrometheus.md)
+[HelmCharts](./README_files/README_Helmfinal.md)
+[helm_monitor](./README_files/README_helm_monitor_sh.md)
 ```bash
 chmod +x monitor/monitor.sh
 ./monitor.sh
 
-chmod +x monitor/monitor1.sh
-./monitor1.sh
+chmod +x monitor/monitor.sh
+./monitor.sh
 ```
 
 # Option 2-Run it manually below
@@ -107,6 +110,8 @@ kubectl get pods,svc,ingress
    ```bash
    kubectl get ingress
    ```
+4. Stop deployment or Cleanup
+    [Cleanup](./README_files/README_stopDeployments.md)
 
 ## 📌 Key Recommendations
 1. **Add service.yaml** - Critical for accessibility
