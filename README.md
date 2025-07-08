@@ -1,10 +1,19 @@
+branch : Monitor
+# launch : deploy.sh (shell script quick launch)
+![deployed image](/images/deployed.png)
+
+# deploy : .github/workflows/deploy.yaml (CICD)
+![CI/CD](/images/CICD.png)
+
 This deployment is purely local minikube only
 AWS k8 deployment is another repo 
 
 ### App repo #########################
 
-startup Docker desktop (Windows) 
-sudo systemctl start docker (Linux)
+startup Docker desktop (Windows)
+
+(Linux)
+sudo systemctl start docker 
 
 # Use Docker Hub
 
@@ -95,10 +104,7 @@ kubectl get pods,svc,ingress
 2. **Consider namespaces** - Add `metadata.namespace` to resources
 3. **Add health checks** - Liveness/readiness probes in deployment
 
-deployed app
-![deployed image](/images/deployed.png)
-CI/CD checks
-![CI/CD](/images/CICD.png)
+
 
 
 
