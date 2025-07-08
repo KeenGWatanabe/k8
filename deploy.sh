@@ -21,6 +21,9 @@ kubectl apply -f manifests/service.yaml
 kubectl apply -f manifests/ingress.yaml
 kubectl get all
 
+# Deploy monitoring
+./monitor/deploy.sh
+
 # Print access info
 echo "=== Access Instructions ==="
 minikube service nodeapp-service

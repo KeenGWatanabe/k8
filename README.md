@@ -40,6 +40,15 @@ chmod +x deploy.sh
 ./deploy.sh
 ```
 
+# run monitor.sh (script for Grafana+Prometheus)
+```bash
+chmod +x monitor/monitor.sh
+./monitor.sh
+
+chmod +x monitor/monitor1.sh
+./monitor1.sh
+```
+
 # Option 2-Run it manually below
 
 1. **Start Minikube**:

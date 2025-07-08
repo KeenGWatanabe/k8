@@ -67,6 +67,14 @@ jobs:
         
         echo "Application URL: $(minikube service nodeapp-service --url)"  
 
-
-
-
+    - name: Deploy Monitoring
+      run: |
+        chmod +x ./monitor/monitor.sh
+        ./monitor/monitor.sh
+    - name: Verify Monitoring
+      run: |
+        kubectl get pods -n monitoring
+        kubectl get svc -n monitoring
+    - name: Get Grafana URL
+      run: |
+        echo "Grafana URL: $(minikube service grafana -n monitoring --url)"
