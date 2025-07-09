@@ -48,8 +48,11 @@ chmod +x deploy.sh
 chmod +x monitor/monitor.sh
 ./monitor/monitor.sh
 ```
-
+# Prometheus query
+![Prometheus](/images/Prometheus.png)
+# Grafana monitor
 ![Grafana](/images/Grafana.png)
+![GrafanaGrap](/images/GrafanaGraph.png)
 
 # Option 2-Run it manually below
 

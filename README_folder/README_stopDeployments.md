@@ -32,6 +32,7 @@ kubectl delete deployment app-deployment
 kubectl delete all --all -n <namespace>
  # OR
 kubectl delete -f ./manifests
+kubectl delete -f ./monitor
 ```
 
 #### **C. Stop Specific Resources**
