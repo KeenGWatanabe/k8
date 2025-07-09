@@ -46,11 +46,10 @@ chmod +x deploy.sh
 [helm_monitor](./README_files/README_helm_monitor_sh.md)
 ```bash
 chmod +x monitor/monitor.sh
-./monitor.sh
-
-chmod +x monitor/monitor.sh
-./monitor.sh
+./monitor/monitor.sh
 ```
+
+![Grafana](/images/Grafana.png)
 
 # Option 2-Run it manually below
 
