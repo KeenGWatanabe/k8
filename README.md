@@ -1,8 +1,22 @@
+(branch: ArgoCD) ####################################
+k8/
+├── .github/workflows/  # CI only (build/push images)
+├── charts/             # Helm charts for ArgoCD
+│   ├── my-app/        # Your Node.js app
+│   ├── prometheus/    # Monitoring stack
+│   └── grafana/
+├── argocd/            # ArgoCD Application manifests
+│   └── apps/
+│       ├── my-app.yaml
+│       ├── prometheus.yaml
+│       └── grafana.yaml
+└── (No deploy.sh!)    # Removed or deprecated
+
+#####################################################
+
 GitHub Actions → Best for CI (testing, building images).
 
 ArgoCD → Best for CD (deploying to Kubernetes declaratively).
-
-
 
 ArgoCD, Prometheus, and Grafana serve **very different purposes** in a Kubernetes ecosystem, but they can work together to form a complete **GitOps-based monitoring and deployment pipeline**. Here's how they differ:
 
