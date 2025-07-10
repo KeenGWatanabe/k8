@@ -1,126 +1,85 @@
-branch : Monitor
-# launch : deploy.sh (shell script quick launch)
-![deployed image](/images/deployed.png)
+GitHub Actions → Best for CI (testing, building images).
 
-# deploy : .github/workflows/deploy.yaml (CICD)
-![CI/CD](/images/CICD.png)
-
-This deployment is purely local [minikube](./README_files/README_minikube.md)only. [install_minikube](./README_files/README_installMinikube.md)
-AWS k8 deployment is another repo [costing](./README_files/README_costing.md)
-
-### App repo #########################
-
-startup Docker desktop (Windows)
-
-(Linux)
-sudo systemctl start docker 
-
-# Use Docker Hub
-
-docker login -u rger
-# Tag and Push to Docker Hub:
-docker tag taskmgr-pte-repo:latest rger/taskmgr-pte-repo:latest
-docker push rger/taskmgr-pte-repo:latest
-
-### App repo #########################
-
-# Option 1- Use shellscript to run it 
-
-
-Start Docker Desktop with 'Github acct' (Windows)
-```bash
-sudo systemctl start docker (Linux)
-docker login -u rger
-```
-
-
-# run deploy.sh (script for below sequence)
-```bash
-chmod +x deploy.sh
-./deploy.sh
-```
-
-# run monitor.sh (script for Grafana+Prometheus)
-[GrafanaPrometheus](./README_files/README_GrafanaPrometheus.md)
-[HelmCharts](./README_files/README_Helmfinal.md)
-[helm_monitor](./README_files/README_helm_monitor_sh.md)
-```bash
-chmod +x monitor/monitor.sh
-./monitor/monitor.sh
-```
-# Prometheus query
-![Prometheus](/images/Prometheus.png)
-# Grafana monitor
-![Grafana](/images/Grafana.png)
-![GrafanaGrap](/images/GrafanaGraph.png)
-
-# Option 2-Run it manually below
-
-1. **Start Minikube**:
-   ```bash
-   minikube start --driver=docker
-   minikube addons enable ingress
-   ```
-
-2. **Deploy to Minikube**:
-   ```bash
-   kubectl delete -f manifests/  # Clean up existing (optional)
-
-# Apply dependencies first
-kubectl apply -f manifests/configmap.yaml
-
-kubectl apply -f manifests/app-secrets.yaml
-
-kubectl apply -f manifests/mongo-db.yaml
-
-# Wait for MongoDB to be ready
-kubectl wait --for=condition=Ready pod -l app=mongo --timeout=120s
-
-# Then apply deployment
-kubectl apply -f manifests/deployment.yaml
-
-# Wait for pods to initialize
-kubectl wait --for=condition=Available deployment/app-deployment --timeout=180s
-
-# ClusterIP / NodePort
-kubectl apply -f manifests/service.yaml
-kubectl apply -f manifests/ingress.yaml
-
-# Verify Deployment  
-kubectl get all
-
-3. **Access Your App**:
-   ```bash
-   minikube service nodeapp-service
-   # OR for ingress:S
-   minikube tunnel
-   curl http://localhost
-   ```
-# check status
-kubectl get pods,svc,ingress
-
-## 🔍 Verification Checklist
-1. Pods running:
-   ```bash
-   kubectl get pods
-   ```
-2. Service exposed:
-   ```bash
-   kubectl get svc
-   ```
-3. Ingress routes (if used):
-   ```bash
-   kubectl get ingress
-   ```
-4. Stop deployment or Cleanup
-    [Cleanup](./README_files/README_stopDeployments.md)
-
-## 📌 Key Recommendations
-1. **Add service.yaml** - Critical for accessibility
-2. **Consider namespaces** - Add `metadata.namespace` to resources
-3. **Add health checks** - Liveness/readiness probes in deployment
+ArgoCD → Best for CD (deploying to Kubernetes declaratively).
 
 
 
+ArgoCD, Prometheus, and Grafana serve **very different purposes** in a Kubernetes ecosystem, but they can work together to form a complete **GitOps-based monitoring and deployment pipeline**. Here's how they differ:
 
+---
 
+### **1. ArgoCD (GitOps Deployment & Continuous Sync)**
+**Purpose**:  
+- A **declarative, GitOps-based continuous delivery tool** for Kubernetes.  
+- Ensures your cluster's state **matches the desired state defined in Git** (YAML manifests, Helm charts, Kustomize).  
+- Automatically deploys and syncs applications when changes are pushed to the repository.  
+
+**Key Features**:  
+- **GitOps Workflow**: Uses Git as the single source of truth for deployments.  
+- **Automated Sync**: Detects changes in Git and applies them to the cluster.  
+- **Health & Status Monitoring**: Shows deployment status (e.g., "Healthy," "Degraded").  
+- **Rollback Capability**: Reverts to a previous Git revision if something goes wrong.  
+- **Multi-Cluster Management**: Can manage deployments across multiple clusters.  
+
+**What It Does NOT Do**:  
+- ❌ Does not monitor application metrics or logs.  
+- ❌ Does not provide dashboards for performance tracking.  
+
+---
+
+### **2. Prometheus (Monitoring & Alerting)**
+**Purpose**:  
+- A **time-series database and monitoring system** that collects and stores metrics.  
+- Continuously **scrapes metrics** from applications, Kubernetes components, and exporters.  
+
+**Key Features**:  
+- **Metric Collection**: Pulls metrics from `/metrics` endpoints (e.g., Node.js app, Kubernetes API, etc.).  
+- **Alerting**: Sends alerts via Alertmanager when thresholds are breached.  
+- **PromQL**: A powerful query language for analyzing metrics.  
+- **Service Discovery**: Automatically finds Kubernetes services/pods to monitor.  
+
+**What It Does NOT Do**:  
+- ❌ Does not deploy applications (unlike ArgoCD).  
+- ❌ Does not provide dashboards (Grafana does that).  
+
+---
+
+### **3. Grafana (Visualization & Dashboards)**
+**Purpose**:  
+- A **dashboarding tool** that visualizes metrics from Prometheus (and other data sources).  
+
+**Key Features**:  
+- **Beautiful Dashboards**: Pre-built and customizable dashboards for monitoring.  
+- **Multiple Data Sources**: Works with Prometheus, Loki (logs), InfluxDB, etc.  
+- **Alerting (Optional)**: Can trigger alerts based on dashboard queries.  
+
+**What It Does NOT Do**:  
+- ❌ Does not collect metrics (Prometheus does that).  
+- ❌ Does not deploy applications (ArgoCD does that).  
+
+---
+
+### **How They Work Together**
+| **Tool**      | **Role**                          | **Example Use Case** |
+|--------------|----------------------------------|----------------------|
+| **ArgoCD**   | Deploys & manages apps via Git   | Deploys Prometheus, Grafana, and Node.js app from Git |
+| **Prometheus** | Collects metrics from apps & infra | Monitors Node.js CPU, memory, HTTP requests |
+| **Grafana**  | Shows dashboards of metrics      | Displays real-time graphs of app performance |
+
+### **Typical Workflow**
+1. **ArgoCD** deploys **Prometheus & Grafana** (and your Node.js app) based on Git manifests.  
+2. **Prometheus** scrapes metrics from your Node.js app, Kubernetes, etc.  
+3. **Grafana** pulls data from Prometheus and displays dashboards.  
+4. If you update a dashboard or app version in Git, **ArgoCD syncs the changes**.  
+
+---
+
+### **Do You Need All Three?**
+✅ **Yes, if you want:**  
+- **Git-based deployments** (ArgoCD)  
+- **Monitoring & alerting** (Prometheus)  
+- **Visual dashboards** (Grafana)  
+
+🚀 **Result:** A fully automated **GitOps + Observability** pipeline!  
+
+Would you like help setting up the interactions between them (e.g., configuring Prometheus in ArgoCD)?
